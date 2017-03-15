@@ -2,16 +2,43 @@
 lock "3.8.0"
 
 set :application, "NANOSERVICE"
-set :repo_url, "git@github.com:Botanik1592/ror-advance.git"
+set :repo_url, "git@github.com:Botanik1592/nanoservice.git"
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
 # Default deploy_to directory is /var/www/my_app_name
 # set :deploy_to, "/var/www/my_app_name"
+set :deploy_to, "/home/botan/nanoservice"
+set :deploy_user, 'botan'
+set :sidekiq_queue, ["default"]
 
 # Default value for :format is :airbrussh.
 # set :format, :airbrussh
+append :linked_files,
+        "config/database.yml",
+        "config/secrets.yml",
+        ".env"
+
+append :linked_dirs, "log",
+             "tmp/pids",
+             "tmp/cache",
+             "tmp/sockets",
+             "public/system",
+             'public/uploads'
+
+namespace :deploy do
+
+  desc 'Restart application'
+  task :restart do
+    on roles(:app), in: :sequence, wait: 5 do
+      #execute :touch, release_path.join('tmp/restart.txt')
+      invoke 'unicorn:restart'
+    end
+  end
+
+  after :publishing, :restart
+end
 
 # You can configure the Airbrussh format using :format_options.
 # These are the defaults.
