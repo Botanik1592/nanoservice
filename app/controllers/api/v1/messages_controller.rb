@@ -10,7 +10,7 @@ class Api::V1::MessagesController < ApplicationController
         if SERVICES_LIST.include?(service) && reciever.present?
           message = Message.create(sender: params[:sender], body: params[:body], service: service, reciever: reciever)
           if message.errors.present?
-            return render json: message.errors, status: 422
+            return render json: { errors: message.errors.full_messages }, status: 422
           else
             Sender.delay.send_message(message)
           end
