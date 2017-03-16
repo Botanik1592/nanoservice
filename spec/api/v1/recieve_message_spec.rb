@@ -61,6 +61,10 @@ describe 'Recieve messages API' do
         expect(response.status).to eq 422
       end
 
+      it 'returns errors' do
+        expect(response.body).to have_json_size(2).at_path("errors")
+      end
+
       it 'does not creates new message in db' do
         expect { post '/api/v1/messages/', params: params }.not_to change(Message, :count)
       end

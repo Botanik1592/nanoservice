@@ -15,12 +15,12 @@ class Api::V1::MessagesController < ApplicationController
             Sender.delay.send_message(message)
           end
         else
-          render json: 'Unknown service', status: 422
+          render json: { errors: 'Unknown service' }, status: 422
         end
       end
       render json: 'Accepted', status: 201
     else
-      render json: 'Service is blank', status: 422
+      render json: { errors: 'Service is blank' }, status: 422
     end
   end
 end
