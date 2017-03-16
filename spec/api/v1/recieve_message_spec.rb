@@ -46,7 +46,7 @@ describe 'Recieve messages API' do
       let(:access_token) { create(:access_token, resource_owner_id: user.id) }
       let(:params) do
         {
-          sender: 'Pavel',
+          #sender: 'Pavel',
           reciever: { whatsapp: 'wa1234', telegram: 't1234', viber: 'v1234' },
           access_token: access_token.token,
           format: :json
@@ -61,7 +61,7 @@ describe 'Recieve messages API' do
         expect(response.status).to eq 422
       end
 
-      it 'creates new message in db' do
+      it 'does not creates new message in db' do
         expect { post '/api/v1/messages/', params: params }.not_to change(Message, :count)
       end
     end
