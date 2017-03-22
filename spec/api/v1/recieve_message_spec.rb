@@ -20,9 +20,12 @@ describe 'Recieve messages API' do
       let(:access_token) { create(:access_token, resource_owner_id: user.id) }
       let(:params) do
         {
-          body: 'Hello, John!',
-          sender: 'Pavel',
-          reciever: { whatsapp: 'wa1234', telegram: 't1234', viber: 'v1234' },
+          messages: [
+            {sender: 'Pavel', body: 'Hello world!', reciever: 'w123', service: 'whatsapp'},
+            {sender: 'Pavel', body: 'Hello world!', reciever: 'w123', service: 'whatsapp'},
+            {sender: 'Pavel', body: 'Hello world!', reciever: 'v123', service: 'viber'},
+            {sender: 'Pavel', body: 'Hello world!', reciever: 't123', service: 'telegram'},
+            ],
           access_token: access_token.token,
           format: :json
         }
@@ -46,8 +49,13 @@ describe 'Recieve messages API' do
       let(:access_token) { create(:access_token, resource_owner_id: user.id) }
       let(:params) do
         {
-          sender: 'Pavel',
-          reciever: { whatsapp: 'wa1234', telegram: 't1234', viber: 'v1234' },
+          messages: [
+            {sender: 'Pavel', body: 'Hello world!', reciever: 't123', service: 'Slack'},
+            {sender: 'Pavel', body: 'Hello world!', reciever: 'w123', service: nil},
+            {sender: 'Pavel', body: 'Hello world!', reciever: nil, service: 'whatsapp'},
+            {sender: 'Pavel', body: nil, reciever: 'w123', service: 'whatsapp'},
+            {sender: nil, body: 'Hello world!', reciever: 'w123', service: 'whatsapp'},
+            ],
           access_token: access_token.token,
           format: :json
         }
@@ -62,7 +70,7 @@ describe 'Recieve messages API' do
       end
 
       it 'returns errors' do
-        expect(response.body).to have_json_size(2).at_path("errors")
+        expect(response.body).to have_json_size(5).at_path("errors/")
       end
 
       it 'does not creates new message in db' do
