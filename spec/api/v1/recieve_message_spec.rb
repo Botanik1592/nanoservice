@@ -65,12 +65,12 @@ describe 'Recieve messages API' do
         post '/api/v1/messages/', params: params
       end
 
-      it 'returns 422 status' do
-        expect(response.status).to eq 422
+      it 'returns 207 status' do
+        expect(response.status).to eq 207
       end
 
       it 'returns errors' do
-        expect(response.body).to have_json_size(5).at_path("errors/")
+        expect(response.body).to have_json_size(5)
       end
 
       it 'does not creates new message in db' do
