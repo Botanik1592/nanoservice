@@ -3,21 +3,24 @@ class Api::V1::MessagesController < ApplicationController
   before_action :doorkeeper_authorize!
 
   def create
-    errors = []
+    totals = []
 
-    params.to_unsafe_h[:messages].uniq.each do |mes|
-      message = Message.create(mes.slice(:sender, :body, :service, :reciever))
-      if message.errors.present?
-        errors << { status: 422, message: message, errors: message.errors.full_messages }
+    params[:messages].each do |mes|
+      search = Message.where(sender: mes[:sender], body: mes[:body], service: mes[:service], reciever: mes[:reciever], created_at: Time.current.all_week).first
+      if search.present?
+        totals << { status: 409, message: search, errors: 'Dublicated message.' }
       else
-        Sender.delay.send_message(message)
+        message = Message.create(sender: mes[:sender], body: mes[:body], service: mes[:service], reciever: mes[:reciever])
+        if message.errors.present?
+          totals << { status: 422, message: message, errors: message.errors.full_messages }
+        else
+          Sender.delay.send_message(message)
+          totals << { status: 201, message: message }
+        end
       end
     end
 
-    if errors.empty?
-      render json: {message: 'Ok'}, status: 201
-    else
-      render json: errors, status: 207
-    end
+    render json: totals, status: 207
+
   end
 end

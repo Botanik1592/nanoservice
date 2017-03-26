@@ -21,22 +21,19 @@ describe 'Recieve messages API' do
       let(:params) do
         {
           messages: [
-            {sender: 'Pavel', body: 'Hello world!', reciever: 'w123', service: 'whatsapp'},
-            {sender: 'Pavel', body: 'Hello world!', reciever: 'w123', service: 'whatsapp'},
-            {sender: 'Pavel', body: 'Hello world!', reciever: 'v123', service: 'viber'},
-            {sender: 'Pavel', body: 'Hello world!', reciever: 't123', service: 'telegram'},
+            {sender: 'Kirill', body: 'Hello world!', reciever: 'w123', service: 'whatsapp'},
+            {sender: 'Sergey', body: 'Salut world!', reciever: 'v123', service: 'viber'},
+            {sender: 'Petr', body: 'Holla world!', reciever: 't123', service: 'telegram'},
+            {sender: 'Kirill', body: 'Hello world!', reciever: 'w123', service: 'whatsapp'},
             ],
           access_token: access_token.token,
           format: :json
         }
       end
 
-      before do
+      it 'returns 207 status' do
         post '/api/v1/messages/', params: params
-      end
-
-      it 'returns 201 status' do
-        expect(response.status).to eq 201
+        expect(response.status).to eq 207
       end
 
       it 'creates new message in db' do

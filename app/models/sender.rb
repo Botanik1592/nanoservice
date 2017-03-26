@@ -23,7 +23,7 @@ class Sender
         message: message.body
       })
     if response == 'Delivered'
-      message.destroy
+      message.status = true
     else
       message.tries += 1
       if message.tries >= 3
