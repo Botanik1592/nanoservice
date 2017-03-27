@@ -41,7 +41,7 @@ describe 'Recieve messages API' do
       end
     end
 
-    context 'authorized and post invalida data' do
+    context 'authorized and post invalid data' do
       let(:user) { create(:user) }
       let(:access_token) { create(:access_token, resource_owner_id: user.id) }
       let(:params) do
@@ -68,6 +68,37 @@ describe 'Recieve messages API' do
 
       it 'returns errors' do
         expect(response.body).to have_json_size(5)
+      end
+
+      it 'does not creates new message in db' do
+        expect { post '/api/v1/messages/', params: params }.not_to change(Message, :count)
+      end
+    end
+
+    context 'authorized and post duplicate data' do
+      let(:user) { create(:user) }
+      let(:message) { create(:message, sender: 'Kirill', body: 'Hello world!', reciever: 'w123', service: 'whatsapp', wn: Date.today.strftime("%U").to_i) }
+      let(:access_token) { create(:access_token, resource_owner_id: user.id) }
+      let(:params) do
+        {
+          messages: [
+            {sender: 'Kirill', body: 'Hello world!', reciever: 'w123', service: 'whatsapp'},
+            ],
+          access_token: access_token.token,
+          format: :json
+        }
+      end
+
+      before do
+        post '/api/v1/messages/', params: params
+      end
+
+      it 'returns 207 status' do
+        expect(response.status).to eq 207
+      end
+
+      it 'returns errors' do
+        expect(response.body).to have_json_size(1)
       end
 
       it 'does not creates new message in db' do
