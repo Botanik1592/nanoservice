@@ -77,7 +77,7 @@ describe 'Recieve messages API' do
 
     context 'authorized and post duplicate data' do
       let(:user) { create(:user) }
-      let(:message) { create(:message, sender: 'Kirill', body: 'Hello world!', reciever: 'w123', service: 'whatsapp', wn: Date.today.strftime("%U").to_i) }
+      let(:message) { create(:message, sender: 'Kirill', body: 'Hello world!', reciever: 'w123', service: 'whatsapp', wn: Date.today.strftime("%U").to_i, created_at: '2017-01-01') }
       let(:access_token) { create(:access_token, resource_owner_id: user.id) }
       let(:params) do
         {
